@@ -5,21 +5,24 @@ import { cn } from "../lib/utils";
 export const ThemeToggle = () => {
     const [isDarkMode, setIsDarkMode] = useState(() => {
         if (typeof window !== "undefined") {
-            return localStorage.getItem("theme") === "dark";
+            const theme = localStorage.getItem("theme");
+            // Default to dark if not set
+            return theme ? theme === "dark" : true;
         }
-        return false;
+        return true;
     });
 
     useEffect(() => {
         const theme = localStorage.getItem("theme");
-        if (theme === "dark") {
+        if (theme === "dark" || !theme) {
             document.documentElement.classList.add("dark");
+            localStorage.setItem("theme", "dark");
             setIsDarkMode(true);
         } else {
             document.documentElement.classList.remove("dark");
             setIsDarkMode(false);
         }
-    }, []);
+    }, [isDarkMode]);
 
     const toggleTheme = () => {
         if (isDarkMode) {
@@ -34,31 +37,31 @@ export const ThemeToggle = () => {
     };
 
     return (
-<button
-    onClick={toggleTheme}
-    className={cn(
+        <button
+            onClick={toggleTheme}
+            className={cn(
                 "fixed",
-                "top-4", // Adjust based on navbar height
-                "left-1/2", // Center horizontally
-                "transform -translate-x-1/2", // Perfect centering
-                "z-50", // Ensure it stays on top
+                "top-4",
+                "left-1/2",
+                "transform -translate-x-1/2",
+                "z-50",
                 "p-2",
                 "rounded-full",
-                "bg-background/80", // Match navbar's bg
-                "backdrop-blur-sm", // Optional: matches navbar blur
-                "shadow-sm", // Subtle shadow
+                "bg-background/80",
+                "backdrop-blur-sm",
+                "shadow-sm",
                 "transition-all",
                 "duration-300",
-                "hover:scale-110", // Gentle interaction
+                "hover:scale-110",
                 "focus:outline-none",
                 "max-md:hidden"
-    )}
->
-    {isDarkMode ? (
-        <Sun className="h-6 w-6 text-yellow-300" />
-    ) : (
-        <Moon className="h-6 w-6 text-blue-900" />
-    )}
-</button>
+            )}
+        >
+            {isDarkMode ? (
+                <Sun className="h-6 w-6 text-yellow-300" />
+            ) : (
+                <Moon className="h-6 w-6 text-blue-900" />
+            )}
+        </button>
     );
 };
